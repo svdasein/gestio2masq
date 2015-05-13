@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+require 'mysql2'
+require 'ipaddress'
+require 'json'
+
+config_file = '/etc/gestio2masq.conf'
+begin
+	config = JSON.parse(File.read(config_file))
+rescue
+	puts %Q(Error reading config from file #{config_file})
+	exit(status=1)
+end
+
+begin
+	mysql = Mysql2::Client.new(
+		 :host => config['sqlhost'],
+		 :username => config['sqluser'],
+		 :password => config['sqlpass'],
+		 :database => config['database']
+	)
+rescue
+	puts %Q(Error connecting to database #{config['database']} on host #{config['sqlhost']} as #{config['sqluser']}.)
+	exit(status=1)
+end
+
+networks_data = mysql.query('select * from net',:symbolize_keys => true)
+ranges_data = mysql.query('select * from ranges',:symbolize_keys => true)
+hosts_data = mysql.query('select * from host order by hostname',:symbolize_keys => true)
+hosts_xtra_data = mysql.query('select custom_host_column_entries.*,custom_host_columns.name from custom_host_column_entries,custom_host_columns where custom_host_columns.id = custom_host_column_entries.cc_id',:symbolize_keys => true)
+nets_extra_data = mysql.query('select custom_net_column_entries.*,custom_net_columns.name from custom_net_column_entries,custom_net_columns where custom_net_columns.id = custom_net_column_entries.cc_id',:symbolize_keys => true)
+
+networks = Hash.new
+networks_data.each { |net|
+	nets_extra_data.select { |each| each[:net_id] == net[:red_num] } .each { |entry|
+		net[entry[:name].to_sym] = entry[:entry]
+	}
+	net[:bitmask] = IPAddress.parse("#{net[:red]}/#{net[:BM]}").netmask
+	networks[net[:red_num]] = net
+}
+
+ranges_entries = Array.new
+ranges_data.each { |range|
+	network = networks[range[:red_num].to_i]
+	start_ip = IPAddress::IPv4.parse_u32(range[:start_ip].to_i)
+	end_ip = IPAddress::IPv4.parse_u32(range[:end_ip].to_i)
+	ranges_entries.push("dhcp-range=#{network[:optiontag]},#{start_ip},#{end_ip},#{network[:bitmask]},#{network[:dynleasetime]}")
+}
+
+hosts_entries = Array.new
+dhcp_hosts_entries = Array.new
+cnames_entries = Array.new
+hosts_data.each { |host|
+	host[:ipaddress] = IPAddress::IPv4.parse_u32(host[:ip].to_i)
+	hosts_xtra_data.select { |each| each[:host_id] == host[:id] } .each { |entry|
+		host[entry[:name].to_sym] = entry[:entry]
+	}
+	host[:network] = networks[host[:red_num]]
+	if host[:hostname].size > 0
+		if host[:MAC]
+			# static dhcp assignment
+			if host[:optiontag]
+				dhcp_hosts_entries.push("#{host[:MAC]},set:#{host[:optiontag]},#{host[:hostname].split('.').shift},#{host[:ipaddress]},#{host[:network][:leasetime]}")
+			else
+				dhcp_hosts_entries.push("#{host[:MAC]},#{host[:hostname].split('.').shift},#{host[:ipaddress]},#{host[:network][:leasetime]}")
+			end
+		end
+		# hostname
+		hosts_entries.push("#{host[:ipaddress]}\t#{host[:hostname]}.#{host[:network][:domain]}")
+		if host[:CNAMEs]
+			host[:CNAMEs].split(':').each { |cname|
+				cnames_entries.push("cname=#{cname},#{host[:hostname]}.#{host[:network][:domain]}")
+			}
+		end
+	end
+}
+puts "="*80
+puts "RANGES"
+File.new('/etc/dnsmasq.d/ranges','w').puts(ranges_entries.join("\n"))
+puts(ranges_entries.join("\n"))
+puts "="*80
+puts "CNAMES"
+File.new('/etc/dnsmasq.d/cnames','w').puts(cnames_entries.join("\n"))
+puts(cnames_entries.join("\n"))
+puts "="*80
+puts "DHCP HOSTS"
+File.new('/etc/dnsmasq-dhcp-hosts.conf','w').puts(dhcp_hosts_entries.join("\n"))
+puts(dhcp_hosts_entries.join("\n"))
+puts "="*80
+puts "HOSTS"
+File.new('/etc/dnsmasq-hosts.conf','w').puts(hosts_entries.join("\n"))
+puts(hosts_entries.join("\n"))
+
