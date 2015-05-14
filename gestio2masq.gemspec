@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["svdasein@github"]
 
   spec.summary       = %q{Executable that generates DNSmasq conifguration files from Gestioip data}
-  spec.description   = %q{This gem provides a executable that generates dnsmasq dns and dhcp configuration from a gestioip\
-database.  Currently only mysql databases are supported}
+  spec.description   = %q{This gem provides an executable that generates dnsmasq dns and dhcp configuration from a
+gestioip mysql database.}
   spec.homepage      = "http://github.com/svdasein/gestio2masq"
   spec.license       = "MIT"
 
