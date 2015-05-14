@@ -8,6 +8,12 @@ gestio2masq generates dnsmasq configuration files from gestioip mysql databases.
 
 First, install it:
 
+    $ git clone https://github.com/svdasein/gestio2masq.git
+    $ cd gestio2masq
+    $ bundle install
+    
+or
+
     $ gem install gestio2masq
     
 Once installed, copy the example config file to /etc/ and edit.  The config file is self documenting :->
