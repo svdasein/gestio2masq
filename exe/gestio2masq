@@ -28,7 +28,7 @@ end
 networks_data = mysql.query('select * from net',:symbolize_keys => true)
 ranges_data = mysql.query('select * from ranges',:symbolize_keys => true)
 hosts_data = mysql.query('select * from host order by hostname',:symbolize_keys => true)
-hosts_xtra_data = mysql.query('select custom_host_column_entries.*,custom_host_columns.name
+hosts_extra_data = mysql.query('select custom_host_column_entries.*,custom_host_columns.name
                                from custom_host_column_entries,custom_host_columns
                                where custom_host_columns.id = custom_host_column_entries.cc_id',
                                :symbolize_keys => true)
@@ -59,7 +59,7 @@ dhcp_hosts_entries = Array.new
 cnames_entries = Array.new
 hosts_data.each { |host|
 	host[:ipaddress] = IPAddress::IPv4.parse_u32(host[:ip].to_i)
-	hosts_xtra_data.select { |each| each[:host_id] == host[:id] } .each { |entry|
+	hosts_extra_data.select { |each| each[:host_id] == host[:id] } .each { |entry|
 		host[entry[:name].to_sym] = entry[:entry]
 	}
 	host[:network] = networks[host[:red_num]]
