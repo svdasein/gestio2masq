@@ -4,12 +4,12 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "gestio2masq"
-  spec.version       = '0.0.3'
+  spec.version       = '0.0.4'
   spec.authors       = ["svdasein"]
   spec.email         = ["svdasein@github"]
 
-  spec.summary       = %q{Binary generates DNSmasq conifguration files from Gestioip data}
-  spec.description   = %q{This gem provides a binary that generates dnsmasq dns and dhcp configuration from a gestioip\
+  spec.summary       = %q{Executable that generates DNSmasq conifguration files from Gestioip data}
+  spec.description   = %q{This gem provides a executable that generates dnsmasq dns and dhcp configuration from a gestioip\
 database.  Currently only mysql databases are supported}
   spec.homepage      = "http://github.com/svdasein/gestio2masq"
   spec.license       = "MIT"
