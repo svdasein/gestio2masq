@@ -77,18 +77,18 @@ hosts_data.each { |host|
 }
 puts "="*80
 puts "RANGES"
-File.new(%Q(#{dest_dir}/ranges.conf),'w').puts(ranges_entries.join("\n"))
+File.new(%Q(#{dest_dir}/dnsmasq.d/ranges),'w').puts(ranges_entries.join("\n"))
 puts(ranges_entries.join("\n"))
 puts "="*80
 puts "CNAMES"
-File.new(%Q(#{dest_dir}/cnames.conf),'w').puts(cnames_entries.join("\n"))
+File.new(%Q(#{dest_dir}/dnsmasq.d/cnames),'w').puts(cnames_entries.join("\n"))
 puts(cnames_entries.join("\n"))
 puts "="*80
 puts "DHCP HOSTS"
-File.new(%Q(#{dest_dir}/dhcp-hosts.conf),'w').puts(dhcp_hosts_entries.join("\n"))
+File.new(%Q(#{dest_dir}/dnsmasq-dhcp-hosts.conf),'w').puts(dhcp_hosts_entries.join("\n"))
 puts(dhcp_hosts_entries.join("\n"))
 puts "="*80
 puts "HOSTS"
-File.new(%Q(#{dest_dir}/hosts.conf),'w').puts(hosts_entries.join("\n"))
+File.new(%Q(#{dest_dir}/dnsmasq-hosts.conf),'w').puts(hosts_entries.join("\n"))
 puts(hosts_entries.join("\n"))
 
