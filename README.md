@@ -106,7 +106,7 @@ dhcp-hostsfile=/etc/dnsmasq-dhcp-hosts.conf
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/gestio2masq/fork )
+1. Fork it ( https://github.com/svdasein]/gestio2masq/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
