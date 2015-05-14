@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.name          = "gestio2masq"
   spec.version       = '0.0.3'
   spec.authors       = ["svdasein"]
-  spec.email         = ["daveparker01@gmail.com"]
+  spec.email         = ["svdasein@github"]
 
   spec.summary       = %q{Binary generates DNSmasq conifguration files from Gestioip data}
   spec.description   = %q{This gem provides a binary that generates dnsmasq dns and dhcp configuration from a gestioip\
