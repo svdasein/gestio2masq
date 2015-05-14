@@ -55,10 +55,10 @@ you used to identify that stuff here.
 
 gestio2masq generates the following files:
 
-destdir/dnsmasq.d/ranges
-destdir/dnsmasq.d/cnames
-destdir/dnsmasq-dhcp-hosts.conf
-destdir/dnsmasq-hosts.conf
+    destdir/dnsmasq.d/ranges
+    destdir/dnsmasq.d/cnames
+    destdir/dnsmasq-dhcp-hosts.conf
+    destdir/dnsmasq-hosts.conf
 
 
 The first two files will be auto-loaded if you launch dnsmasq with ```-7 destdir/dnsmasq.d```
