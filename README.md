@@ -1,4 +1,5 @@
 # Gestio2masq
+[![Gem Version](https://badge.fury.io/rb/gestio2masq.svg)](http://badge.fury.io/rb/gestio2masq)
 
 gestio2masq generates dnsmasq configuration files from gestioip mysql databases. Or at least, it does this
   *for me*.  YMMV.
