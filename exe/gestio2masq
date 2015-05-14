@@ -28,8 +28,14 @@ end
 networks_data = mysql.query('select * from net',:symbolize_keys => true)
 ranges_data = mysql.query('select * from ranges',:symbolize_keys => true)
 hosts_data = mysql.query('select * from host order by hostname',:symbolize_keys => true)
-hosts_xtra_data = mysql.query('select custom_host_column_entries.*,custom_host_columns.name from custom_host_column_entries,custom_host_columns where custom_host_columns.id = custom_host_column_entries.cc_id',:symbolize_keys => true)
-nets_extra_data = mysql.query('select custom_net_column_entries.*,custom_net_columns.name from custom_net_column_entries,custom_net_columns where custom_net_columns.id = custom_net_column_entries.cc_id',:symbolize_keys => true)
+hosts_xtra_data = mysql.query('select custom_host_column_entries.*,custom_host_columns.name
+                               from custom_host_column_entries,custom_host_columns
+                               where custom_host_columns.id = custom_host_column_entries.cc_id',
+                               :symbolize_keys => true)
+nets_extra_data = mysql.query('select custom_net_column_entries.*,custom_net_columns.name
+                               from custom_net_column_entries,custom_net_columns
+                               where custom_net_columns.id = custom_net_column_entries.cc_id',
+                               :symbolize_keys => true)
 
 networks = Hash.new
 networks_data.each { |net|
