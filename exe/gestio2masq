@@ -41,7 +41,7 @@ config_file = opts[:config]||defaults[:config]
 config = nil
 if File.exist?(config_file)
   begin
-  	config = YAML.load(File.read(config_file))
+    config = YAML.load(File.read(config_file))
   rescue => detail
     puts detail.backtrace
     puts %Q(Error reading config from file #{config_file})
