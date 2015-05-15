@@ -14,7 +14,7 @@ defaults = {
 }
 
 opts = Trollop::options do
-  version %Q{gestio2masq #{Gestio2masq::VERSION} (c)2015 David Parker}
+  version %Q{gestio2masq #{Gestio2masq::VERSION} (c)2015 David A. Parker}
 	banner <<-EOS
 
 gestio2masq: generate dnsmasq configuration from a gestioip mysql database
