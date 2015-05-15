@@ -13,6 +13,18 @@ defaults = {
 }
 
 opts = Trollop::options do
+	banner <<-EOS
+
+gestio2masq: generate dnsmasq configuration from a gestioip mysql database
+
+Usage:
+       gestio2masq [options]
+
+[options]:
+
+
+	EOS
+
   opt :config,   'Config file path',  :short=>'c', :type=>:string
   opt :destdir,  'Destination dir',   :short=>'t', :type=>:string
   opt :sqlhost,  'Database host',     :short=>'h', :type=>:string
