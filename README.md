@@ -119,7 +119,7 @@ dhcp-hostsfile=/etc/dnsmasq-dhcp-hosts.conf
 
 ## IRC
 
-    #gestio2masq on Freenode
+**\#gestio2masq** on Freenode
 
 ## Contributing
 
