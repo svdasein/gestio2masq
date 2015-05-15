@@ -117,6 +117,10 @@ dhcp-hostsfile=/etc/dnsmasq-dhcp-hosts.conf
         -e, --help            Show this message
 
 
+## IRC
+
+    #gestio2masq on Freenode
+
 ## Contributing
 
 1. Fork it ( https://github.com/svdasein/gestio2masq/fork )
