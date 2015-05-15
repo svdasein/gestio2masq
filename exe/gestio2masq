@@ -44,7 +44,7 @@ if File.exist?(config_file)
   	config = YAML.load(File.read(config_file))
   rescue => detail
     puts detail.backtrace
-  	puts %Q(Error reading config from file #{config_file})
+    puts %Q(Error reading config from file #{config_file})
     exit(1)
   end
 end
