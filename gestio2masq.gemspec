@@ -30,7 +30,7 @@ gestioip mysql database.}
 
   spec.add_development_dependency "bundler", "~> 1.9"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_runtime_dependency 'trollop', '~> 2.1'
+  spec.add_runtime_dependency 'trollop', '~> 2.0'
   spec.add_runtime_dependency 'mysql2','~> 0.3'
   spec.add_runtime_dependency 'ipaddress','~> 0.8'
 end
