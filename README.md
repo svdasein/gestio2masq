@@ -104,6 +104,17 @@ dhcp-hostsfile=/etc/dnsmasq-dhcp-hosts.conf
     $ gestio2masq
     $ service dnsmasq restart (or equiv)
 
+    $ gestio2masq --help
+    Options:
+        -c, --config=<s>      Config file path
+        -t, --destdir=<s>     Destination dir
+        -h, --sqlhost=<s>     Database host
+        -d, --database=<s>    Database name
+        -u, --sqluser=<s>     Database user
+        -p, --sqlpass=<s>     Database password
+        -v, --verbose         Verbose output
+        -e, --help            Show this message
+
 
 ## Contributing
 

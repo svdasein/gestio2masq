@@ -19,6 +19,7 @@ opts = Trollop::options do
   opt :database, 'Database name',     :short=>'d', :type=>:string
   opt :sqluser,  'Database user',     :short=>'u', :type=>:string
   opt :sqlpass,  'Database password', :short=>'p', :type=>:string
+  opt :verbose,  'Verbose output',    :short=>'v'
 end
 
 config_file = opts[:config]||defaults[:config]
@@ -112,20 +113,20 @@ hosts_data.each { |host|
 		end
 	end
 }
-puts "="*80
-puts "RANGES"
+puts "="*80 if config[:verbose]
+puts "RANGES: #{ranges_entries.size}"
 File.new(%Q(#{config[:destdir]}/dnsmasq.d/ranges),'w').puts(ranges_entries.join("\n"))
-puts(ranges_entries.join("\n"))
-puts "="*80
-puts "CNAMES"
+puts(ranges_entries.join("\n")) if config[:verbose]
+puts "="*80 if config[:verbose]
+puts "CNAMES: #{cnames_entries.size}"
 File.new(%Q(#{config[:destdir]}/dnsmasq.d/cnames),'w').puts(cnames_entries.join("\n"))
-puts(cnames_entries.join("\n"))
-puts "="*80
-puts "DHCP HOSTS"
+puts(cnames_entries.join("\n")) if config[:verbose]
+puts "="*80 if config[:verbose]
+puts "DHCP HOSTS: #{dhcp_hosts_entries.size}"
 File.new(%Q(#{config[:destdir]}/dnsmasq-dhcp-hosts.conf),'w').puts(dhcp_hosts_entries.join("\n"))
-puts(dhcp_hosts_entries.join("\n"))
-puts "="*80
-puts "HOSTS"
+puts(dhcp_hosts_entries.join("\n")) if config[:verbose]
+puts "="*80 if config[:verbose]
+puts "HOSTS: #{hosts_entries.size}"
 File.new(%Q(#{config[:destdir]}/dnsmasq-hosts.conf),'w').puts(hosts_entries.join("\n"))
-puts(hosts_entries.join("\n"))
+puts(hosts_entries.join("\n")) if config[:verbose]
 
