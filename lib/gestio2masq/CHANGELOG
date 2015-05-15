@@ -1,0 +1,35 @@
+0.1.0
+
+* Added defaults and command line options.
+
+defaults = {
+    :config => '/etc/gestio2masq.conf',
+    :destdir => '/etc',
+    :sqlhost => 'localhost',
+    :database => 'gestioip',
+    :sqluser => 'root'
+}
+
+
+gestio2masq --help
+Options:
+  -c, --config=<s>      Config file path
+  -t, --destdir=<s>     Destination dir
+  -h, --sqlhost=<s>     Database host
+  -d, --database=<s>    Database name
+  -u, --sqluser=<s>     Database user
+  -p, --sqlpass=<s>     Database password
+  -e, --help            Show this message
+
+
+Order of precedence, low to high:
+
+defaults
+config file values
+command line options
+
+
+* Changed config file format to YAML. Note that the JSON form will still work, but you should really
+  convert it to YAML.
+
+* got rid of dest_dir; just using config hash directly

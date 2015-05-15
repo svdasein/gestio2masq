@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "gestio2masq"
-  spec.version       = '0.0.7'
+  spec.version       = '0.1.0'
   spec.authors       = ["svdasein"]
   spec.email         = ["svdasein@github"]
 
