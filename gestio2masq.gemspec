@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = "gestio2masq"
-  spec.version       = '0.1.2'
+  spec.version       = '0.1.3'
   spec.authors       = ["svdasein"]
   spec.email         = ["svdasein@github"]
 
@@ -31,4 +31,5 @@ gestioip mysql database.}
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_runtime_dependency 'trollop', '~> 2.1'
   spec.add_runtime_dependency 'mysql2','~> 0.3'
+  spec.add_runtime_dependency 'ipaddress','~> 0.8'
 end
