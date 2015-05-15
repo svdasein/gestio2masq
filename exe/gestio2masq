@@ -85,6 +85,7 @@ nets_extra_data = mysql.query('select custom_net_column_entries.*,custom_net_col
 
 networks = Hash.new
 networks_data.each { |net|
+	# Merge custom network columns in with "regular" columns
 	nets_extra_data.select { |each| each[:net_id] == net[:red_num] } .each { |entry|
 		net[entry[:name].to_sym] = entry[:entry]
 	}
@@ -105,9 +106,11 @@ dhcp_hosts_entries = Array.new
 cnames_entries = Array.new
 hosts_data.each { |host|
 	host[:ipaddress] = IPAddress::IPv4.parse_u32(host[:ip].to_i)
+	# Merge custom host columns in with "regular" columns
 	hosts_extra_data.select { |each| each[:host_id] == host[:id] } .each { |entry|
 		host[entry[:name].to_sym] = entry[:entry]
 	}
+	# make hosts point to the network they belong to
 	host[:network] = networks[host[:red_num]]
 	if host[:hostname].size > 0
 		if host[:MAC]
