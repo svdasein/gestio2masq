@@ -1,10 +1,11 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require 'gestio2masq/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "gestio2masq"
-  spec.version       = '0.1.4'
+  spec.version       = Gestio2masq::VERSION
   spec.authors       = ["svdasein"]
   spec.email         = ["svdasein@github"]
 

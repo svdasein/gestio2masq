@@ -2,6 +2,7 @@
 * Add license
 * readme updates
 * add to help text
+* add --version, module, etc
 
 0.1.3
 * Add gem runtime dep

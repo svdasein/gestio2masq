@@ -3,6 +3,7 @@ require 'mysql2'
 require 'ipaddress'
 require 'yaml'
 require 'trollop'
+require 'gestio2masq'
 
 defaults = {
     :config => '/etc/gestio2masq.conf',
@@ -13,6 +14,7 @@ defaults = {
 }
 
 opts = Trollop::options do
+  version %Q{gestio2masq #{Gestio2masq::VERSION} (c)2015 David Parker}
 	banner <<-EOS
 
 gestio2masq: generate dnsmasq configuration from a gestioip mysql database
