@@ -18,7 +18,7 @@ or
 
     $ gem install gestio2masq
     
-Once installed, copy the example config file to /etc/ and edit.  The config file is self documenting :->
+Once installed, copy the example config file to /etc/ and edit (or use command line switches, see below).
 
 ###gestio2masq requires some custom fields in gestioip.
 
