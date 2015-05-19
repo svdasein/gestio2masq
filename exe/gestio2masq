@@ -16,13 +16,13 @@ defaults = {
 opts = Trollop::options do
   usage '[options]'
   version %Q{Version #{Gestio2masq::VERSION}}
-  opt :config,   'Config file path',  :short=>'c', :type=>:string
-  opt :destdir,  'Destination dir',   :short=>'t', :type=>:string
-  opt :sqlhost,  'Database host',     :short=>'h', :type=>:string
-  opt :database, 'Database name',     :short=>'d', :type=>:string
-  opt :sqluser,  'Database user',     :short=>'u', :type=>:string
-  opt :sqlpass,  'Database password', :short=>'p', :type=>:string
-  opt :verbose,  'Verbose output',    :short=>'v'
+  opt :config, 'Config file path', :short => 'c', :type => :string
+  opt :destdir, 'Destination dir', :short => 't', :type => :string
+  opt :sqlhost, 'Database host', :short => 'h', :type => :string
+  opt :database, 'Database name', :short => 'd', :type => :string
+  opt :sqluser, 'Database user', :short => 'u', :type => :string
+  opt :sqlpass, 'Database password', :short => 'p', :type => :string
+  opt :verbose, 'Verbose output', :short => 'v'
 end
 
 config_file = opts[:config]||defaults[:config]
@@ -42,27 +42,27 @@ if config.nil? or (config.class != Hash)
   config = Hash.new
 else
   # symbolize hash keys (json format compatibility)
-  config = Hash[config.map{|(k,v)| [k.to_sym,v]}]
+  config = Hash[config.map { |(k, v)| [k.to_sym, v] }]
 end
 
 # Precedence (low to high): defaults, config file, command line
-config = defaults.merge(config).merge(Hash(opts.select {|k,v| !v.nil?}))
+config = defaults.merge(config).merge(Hash(opts.select { |k, v| !v.nil? }))
 
 begin
-	mysql = Mysql2::Client.new(
-		 :host => config[:sqlhost],
-		 :username => config[:sqluser],
-		 :password => config[:sqlpass],
-		 :database => config[:database]
-	)
+  mysql = Mysql2::Client.new(
+      :host => config[:sqlhost],
+      :username => config[:sqluser],
+      :password => config[:sqlpass],
+      :database => config[:database]
+  )
 rescue
-	puts %Q(Error connecting to database #{config[:database]} on host #{config[:sqlhost]} as #{config[:sqluser]}.)
-	exit(status=1)
+  puts %Q(Error connecting to database #{config[:database]} on host #{config[:sqlhost]} as #{config[:sqluser]}.)
+  exit(status=1)
 end
 
-networks_data = mysql.query('select * from net',:symbolize_keys => true)
-ranges_data = mysql.query('select * from ranges',:symbolize_keys => true)
-hosts_data = mysql.query('select * from host order by hostname',:symbolize_keys => true)
+networks_data = mysql.query('select * from net', :symbolize_keys => true)
+ranges_data = mysql.query('select * from ranges', :symbolize_keys => true)
+hosts_data = mysql.query('select * from host order by hostname', :symbolize_keys => true)
 hosts_extra_data = mysql.query('select custom_host_column_entries.*,custom_host_columns.name
                                from custom_host_column_entries,custom_host_columns
                                where custom_host_columns.id = custom_host_column_entries.cc_id',
@@ -70,32 +70,32 @@ hosts_extra_data = mysql.query('select custom_host_column_entries.*,custom_host_
 nets_extra_data = mysql.query('select custom_net_column_entries.*,custom_net_columns.name
                                from custom_net_column_entries,custom_net_columns
                                where custom_net_columns.id = custom_net_column_entries.cc_id',
-                               :symbolize_keys => true)
+                              :symbolize_keys => true)
 
 networks = Hash.new
 networks_data.each { |net|
-	# Merge custom network columns in with "regular" columns
-	nets_extra_data.select { |each| each[:net_id] == net[:red_num] } .each { |entry|
-		net[entry[:name].to_sym] = entry[:entry]
-	}
+  # Merge custom network columns in with "regular" columns
+  nets_extra_data.select { |each| each[:net_id] == net[:red_num] }.each { |entry|
+    net[entry[:name].to_sym] = entry[:entry]
+  }
   begin
-		net[:bitmask] = IPAddress.parse("#{net[:red]}/#{net[:BM]}").netmask
-		networks[net[:red_num]] = net
+    net[:bitmask] = IPAddress.parse("#{net[:red]}/#{net[:BM]}").netmask
+    networks[net[:red_num]] = net
   rescue
     puts "IP address #{net[:red]}/#{net[:BM]} won't parse - rejecting"
-	end
+  end
 }
 
 ranges_entries = Array.new
 ranges_data.each { |range|
-	if network = networks[range[:red_num].to_i]
-    	begin
-				start_ip = IPAddress::IPv4.parse_u32(range[:start_ip].to_i)
-        end_ip = IPAddress::IPv4.parse_u32(range[:end_ip].to_i)
-				ranges_entries.push("dhcp-range=#{network[:optiontag]},#{start_ip},#{end_ip},#{network[:bitmask]},#{network[:dynleasetime]}")
-      rescue
-        puts "Range #{range[:start_ip]}-#{range[:end_ip]} won't parse - rejecting"
-      end
+  if network = networks[range[:red_num].to_i]
+    begin
+      start_ip = IPAddress::IPv4.parse_u32(range[:start_ip].to_i)
+      end_ip = IPAddress::IPv4.parse_u32(range[:end_ip].to_i)
+      ranges_entries.push("dhcp-range=#{network[:optiontag]},#{start_ip},#{end_ip},#{network[:bitmask]},#{network[:dynleasetime]}")
+    rescue
+      puts "Range #{range[:start_ip]}-#{range[:end_ip]} won't parse - rejecting"
+    end
   end
 }
 
@@ -104,49 +104,49 @@ dhcp_hosts_entries = Array.new
 cnames_entries = Array.new
 hosts_data.each { |host|
   begin
-		host[:ipaddress] = IPAddress::IPv4.parse_u32(host[:ip].to_i)
+    host[:ipaddress] = IPAddress::IPv4.parse_u32(host[:ip].to_i)
   rescue
     puts "Host #{host[:ip]} won't parse - rejecting"
     next
   end
-	# Merge custom host columns in with "regular" columns
-	hosts_extra_data.select { |each| each[:host_id] == host[:id] } .each { |entry|
-		host[entry[:name].to_sym] = entry[:entry]
-	}
-	# make hosts point to the network they belong to
-	host[:network] = networks[host[:red_num]]
-	if host[:hostname].size > 0
-		if host[:MAC]
-			# static dhcp assignment
-			if host[:optiontag]
-				dhcp_hosts_entries.push("#{host[:MAC]},set:#{host[:optiontag]},#{host[:hostname].split('.').shift},#{host[:ipaddress]},#{host[:network][:leasetime]}")
-			else
-				dhcp_hosts_entries.push("#{host[:MAC]},#{host[:hostname].split('.').shift},#{host[:ipaddress]},#{host[:network][:leasetime]}")
-			end
-		end
-		# hostname
-		hosts_entries.push("#{host[:ipaddress]}\t#{host[:hostname]}.#{host[:network][:domain]}")
-		if host[:CNAMEs]
-			host[:CNAMEs].split(':').each { |cname|
-				cnames_entries.push("cname=#{cname},#{host[:hostname]}.#{host[:network][:domain]}")
-			}
-		end
-	end
+  # Merge custom host columns in with "regular" columns
+  hosts_extra_data.select { |each| each[:host_id] == host[:id] }.each { |entry|
+    host[entry[:name].to_sym] = entry[:entry]
+  }
+  # make hosts point to the network they belong to
+  host[:network] = networks[host[:red_num]]
+  if host[:hostname].size > 0
+    if host[:MAC]
+      # static dhcp assignment
+      if host[:optiontag]
+        dhcp_hosts_entries.push("#{host[:MAC]},set:#{host[:optiontag]},#{host[:hostname].split('.').shift},#{host[:ipaddress]},#{host[:network][:leasetime]}")
+      else
+        dhcp_hosts_entries.push("#{host[:MAC]},#{host[:hostname].split('.').shift},#{host[:ipaddress]},#{host[:network][:leasetime]}")
+      end
+    end
+    # hostname
+    hosts_entries.push("#{host[:ipaddress]}\t#{host[:hostname]}.#{host[:network][:domain]}")
+    if host[:CNAMEs]
+      host[:CNAMEs].split(':').each { |cname|
+        cnames_entries.push("cname=#{cname},#{host[:hostname]}.#{host[:network][:domain]}")
+      }
+    end
+  end
 }
 puts "="*80 if config[:verbose]
 puts "RANGES: #{ranges_entries.size}"
-File.new(%Q(#{config[:destdir]}/dnsmasq.d/ranges),'w').puts(ranges_entries.join("\n"))
+File.new(%Q(#{config[:destdir]}/dnsmasq.d/ranges), 'w').puts(ranges_entries.join("\n"))
 puts(ranges_entries.join("\n")) if config[:verbose]
 puts "="*80 if config[:verbose]
 puts "CNAMES: #{cnames_entries.size}"
-File.new(%Q(#{config[:destdir]}/dnsmasq.d/cnames),'w').puts(cnames_entries.join("\n"))
+File.new(%Q(#{config[:destdir]}/dnsmasq.d/cnames), 'w').puts(cnames_entries.join("\n"))
 puts(cnames_entries.join("\n")) if config[:verbose]
 puts "="*80 if config[:verbose]
 puts "DHCP HOSTS: #{dhcp_hosts_entries.size}"
-File.new(%Q(#{config[:destdir]}/dnsmasq-dhcp-hosts.conf),'w').puts(dhcp_hosts_entries.join("\n"))
+File.new(%Q(#{config[:destdir]}/dnsmasq-dhcp-hosts.conf), 'w').puts(dhcp_hosts_entries.join("\n"))
 puts(dhcp_hosts_entries.join("\n")) if config[:verbose]
 puts "="*80 if config[:verbose]
 puts "HOSTS: #{hosts_entries.size}"
-File.new(%Q(#{config[:destdir]}/dnsmasq-hosts.conf),'w').puts(hosts_entries.join("\n"))
+File.new(%Q(#{config[:destdir]}/dnsmasq-hosts.conf), 'w').puts(hosts_entries.join("\n"))
 puts(hosts_entries.join("\n")) if config[:verbose]
 
