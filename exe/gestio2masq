@@ -78,23 +78,37 @@ networks_data.each { |net|
 	nets_extra_data.select { |each| each[:net_id] == net[:red_num] } .each { |entry|
 		net[entry[:name].to_sym] = entry[:entry]
 	}
-	net[:bitmask] = IPAddress.parse("#{net[:red]}/#{net[:BM]}").netmask
-	networks[net[:red_num]] = net
+  begin
+		net[:bitmask] = IPAddress.parse("#{net[:red]}/#{net[:BM]}").netmask
+		networks[net[:red_num]] = net
+  rescue
+    puts "IP address #{net[:red]}/#{net[:BM]} won't parse - rejecting"
+	end
 }
 
 ranges_entries = Array.new
 ranges_data.each { |range|
-	network = networks[range[:red_num].to_i]
-	start_ip = IPAddress::IPv4.parse_u32(range[:start_ip].to_i)
-	end_ip = IPAddress::IPv4.parse_u32(range[:end_ip].to_i)
-	ranges_entries.push("dhcp-range=#{network[:optiontag]},#{start_ip},#{end_ip},#{network[:bitmask]},#{network[:dynleasetime]}")
+	if network = networks[range[:red_num].to_i]
+    	begin
+				start_ip = IPAddress::IPv4.parse_u32(range[:start_ip].to_i)
+        end_ip = IPAddress::IPv4.parse_u32(range[:end_ip].to_i)
+				ranges_entries.push("dhcp-range=#{network[:optiontag]},#{start_ip},#{end_ip},#{network[:bitmask]},#{network[:dynleasetime]}")
+      rescue
+        puts "Range #{range[:start_ip]}-#{range[:end_ip]} won't parse - rejecting"
+      end
+  end
 }
 
 hosts_entries = Array.new
 dhcp_hosts_entries = Array.new
 cnames_entries = Array.new
 hosts_data.each { |host|
-	host[:ipaddress] = IPAddress::IPv4.parse_u32(host[:ip].to_i)
+  begin
+		host[:ipaddress] = IPAddress::IPv4.parse_u32(host[:ip].to_i)
+  rescue
+    puts "Host #{host[:ip]} won't parse - rejecting"
+    next
+  end
 	# Merge custom host columns in with "regular" columns
 	hosts_extra_data.select { |each| each[:host_id] == host[:id] } .each { |entry|
 		host[entry[:name].to_sym] = entry[:entry]

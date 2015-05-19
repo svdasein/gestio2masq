@@ -1,5 +1,6 @@
 0.1.5
 * fix duplicate license, move changelog
+* filter out ipv6 addresses (they caused a crash)
 
 0.1.4
 * Add license
