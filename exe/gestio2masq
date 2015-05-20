@@ -125,10 +125,18 @@ hosts_data.each { |host|
       end
     end
     # hostname
-    hosts_entries.push("#{host[:ipaddress]}\t#{host[:hostname]}.#{host[:network][:domain]}")
+    if host[:network] and host[:network][:domain]
+      hosts_entries.push("#{host[:ipaddress]}\t#{host[:hostname]}.#{host[:network][:domain]}")
+    else
+      hosts_entries.push("#{host[:ipaddress]}\t#{host[:hostname]}")
+    end
     if host[:CNAMEs]
       host[:CNAMEs].split(':').each { |cname|
-        cnames_entries.push("cname=#{cname},#{host[:hostname]}.#{host[:network][:domain]}")
+        if host[:network] and host[:network][:domain]
+          cnames_entries.push("cname=#{cname},#{host[:hostname]}.#{host[:network][:domain]}")
+        else
+          cnames_entries.push("cname=#{cname},#{host[:hostname]}")
+        end
       }
     end
   end
